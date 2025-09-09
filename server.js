@@ -1,20 +1,47 @@
 const express = require('express');
-const app = express();
 const path = require('path');
+const expressLayouts = require('express-ejs-layouts');
 
-// Set EJS as templating engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Initialize express app first
+const app = express();
 
-// Serve static files
+// Middleware
+app.use(expressLayouts);
+app.set('layout', './layouts/layout');
+
+// Set up static assets directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Configure view engine and views directory
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Routes
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { 
+        title: 'Home',
+        message: 'Welcome to CSE340 Motors' 
+    });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.get('/inventory', (req, res) => {
+    res.render('inventory', { title: 'Inventory' });
 });
+
+app.get('/about', (req, res) => {
+    res.render('about', { title: 'About Us' });
+});
+
+// Error handling
+app.use((req, res) => {
+    res.status(404).render('404', { title: 'Page Not Found' });
+});
+
+// Use environment port for Render
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+    console.log(`Visit: http://localhost:${port}`);
+});
+
+module.exports = app;

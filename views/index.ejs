@@ -2,57 +2,63 @@
 <html lang="en">
 <%- include('partials/head', {title: 'Home'}) %>
 <body>
-    <%- include('partials/header') %>
-    <%- include('partials/nav') %>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <main>
-        <section class="hero">
-            <h2>Welcome to CSE Motors!</h2>
-        </section>
 
-        <section class="featured-car">
-            <img src="/images/delorean.jpg" alt="DMC Delorean">
-            <div class="car-info">
-                <h3>DMC Delorean</h3>
+    <main id="main-content" role="main">
+        <div class="container">
+            <section class="hero" aria-labelledby="hero-heading">
+                <h2 id="hero-heading">Welcome to CSE Motors!</h2>
+                <p>Your premier destination for quality vehicles</p>
+                <a href="/inventory" class="btn btn-primary">View Our Inventory</a>
+            </section>
+
+            <section class="featured-car" aria-labelledby="featured-heading">
+                <h2 id="featured-heading">Featured Vehicle</h2>
+                <div class="car-content">
+                    <img src="/images/delorean.jpg" alt="DMC Delorean - Classic time machine car" class="car-image">
+                    <div class="car-info">
+                        <h3>DMC Delorean</h3>
+                        <ul>
+                            <li>3 Cup holders</li>
+                            <li>Superman doors</li>
+                            <li>Fuzzy dice</li>
+                        </ul>
+                        <button class="btn">Own Today</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="upgrades" aria-labelledby="upgrades-heading">
+                <h3 id="upgrades-heading">Delorean Upgrades</h3>
+                <div class="upgrade-grid">
+                    <div class="upgrade-item">
+                        <h4>Flux Capacitor</h4>
+                    </div>
+                    <div class="upgrade-item">
+                        <h4>Flame Decals</h4>
+                    </div>
+                    <div class="upgrade-item">
+                        <h4>Bumper Stickers</h4>
+                    </div>
+                    <div class="upgrade-item">
+                        <h4>Hub Caps</h4>
+                    </div>
+                </div>
+            </section>
+
+            <section class="reviews" aria-labelledby="reviews-heading">
+                <h3 id="reviews-heading">DMC Delorean Reviews</h3>
                 <ul>
-                    <li>3 Cup holders</li>
-                    <li>Superman doors</li>
-                    <li>Fuzzy dice</li>
+                    <li>"So fast it's almost like traveling in time." (4/5)</li>
+                    <li>"Coolest ride on the road." (4/5)</li>
+                    <li>"I'm feeling McFly!" (5/5)</li>
+                    <li>"The most futuristic ride of our day." (4.5/5)</li>
+                    <li>"80's livin and I love it!" (5/5)</li>
                 </ul>
-                <button>Own Today</button>
-            </div>
-        </section>
-
-        <section class="upgrades">
-            <h3>Delorean Upgrades</h3>
-            <div class="upgrade-grid">
-                <div class="upgrade-item">
-                    <h4>Flux Capacitor</h4>
-                </div>
-                <div class="upgrade-item">
-                    <h4>Flame Decals</h4>
-                </div>
-                <div class="upgrade-item">
-                    <h4>Bumper Stickers</h4>
-                </div>
-                <div class="upgrade-item">
-                    <h4>Hub Caps</h4>
-                </div>
-            </div>
-        </section>
-
-        <section class="reviews">
-            <h3>DMC Delorean Reviews</h3>
-            <ul>
-                <li>"So fast it's almost like traveling in time." (4/5)</li>
-                <li>"Coolest ride on the road." (4/5)</li>
-                <li>"I'm feeling McFly!" (5/5)</li>
-                <li>"The most futuristic ride of our day." (4.5/5)</li>
-                <li>"80's livin and I love it!" (5/5)</li>
-            </ul>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <%- include('partials/footer') %>
 </body>
 </html>
