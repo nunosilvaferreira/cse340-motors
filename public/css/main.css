@@ -326,7 +326,7 @@ textarea:focus {
 }
 
 /* High Contrast Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     :root {
         --primary-color: #000000;
         --secondary-color: #990000;
