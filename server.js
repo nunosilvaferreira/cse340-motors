@@ -24,7 +24,7 @@ app.set('view engine', 'ejs');
 
 // Import routes
 const indexRouter = require('./routes/index');
-const inventoryRouter = require('./routes/inventoryRoute');
+const inventoryRoute = require("./routes/inventory-routes")
 
 // Use routes
 app.use('/', indexRouter);
