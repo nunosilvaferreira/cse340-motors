@@ -1,0 +1,10 @@
+<%- nav %>
+<h1><%= title %></h1>
+<ul>
+  <% data.forEach(item => { %>
+    <li>
+      <strong><%= item.inv_make %> <%= item.inv_model %></strong>
+      (<%= item.inv_year %>) - $<%= item.inv_price %>
+    </li>
+  <% }) %>
+</ul>
