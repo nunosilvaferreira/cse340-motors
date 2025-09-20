@@ -1,10 +1,23 @@
-<%- nav %>
-<h1><%= title %></h1>
-<ul>
-  <% data.forEach(item => { %>
-    <li>
-      <strong><%= item.inv_make %> <%= item.inv_model %></strong>
-      (<%= item.inv_year %>) - $<%= item.inv_price %>
-    </li>
-  <% }) %>
-</ul>
+<h2><%= title %></h2>
+
+<% if (data && data.length > 0) { %>
+  <section class="inventory-grid">
+    <% data.forEach(item => { %>
+      <article class="vehicle-card">
+        <h3>
+          <a href="/inv/detail/<%= item.inv_id %>">
+            <%= item.inv_make %> <%= item.inv_model %>
+          </a>
+        </h3>
+        <p class="vehicle-year">Year: <%= item.inv_year %></p>
+        <p class="vehicle-price">Price: $<%= item.inv_price %></p>
+        <% if (item.inv_description) { %>
+          <p class="vehicle-description"><%= item.inv_description %></p>
+        <% } %>
+        <a href="/inv/detail/<%= item.inv_id %>" class="btn-primary">View Details</a>
+      </article>
+    <% }) %>
+  </section>
+<% } else { %>
+  <p class="no-vehicles">No vehicles available at the moment.</p>
+<% } %>

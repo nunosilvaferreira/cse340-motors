@@ -1,86 +1,84 @@
 // server.js
-const express = require("express")
-const path = require("path")
-const expressLayouts = require("express-ejs-layouts")
-const pool = require("./database/db") // Database connection
-const utilities = require("./utilities/") // Utilities module
+const express = require("express");
+const path = require("path");
+const expressLayouts = require("express-ejs-layouts");
 
 // Load environment variables early
 if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config()
+  require("dotenv").config();
 }
 
-// Initialize express app
-const app = express()
+const pool = require("./database/db");
+const utilities = require("./utilities/");
 
-// Middleware
-app.use(expressLayouts)
-app.set("layout", "./layouts/layout")
+const app = express();
 
-// Static assets
-app.use(express.static(path.join(__dirname, "public")))
+// Layouts
+app.use(expressLayouts);
+app.set("layout", "./layouts/layout");
+
+// Static files
+app.use(express.static(path.join(__dirname, "public")));
 
 // Body parsers
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Views setup
-app.set("views", path.join(__dirname, "views"))
-app.set("view engine", "ejs")
+// Views
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 // Routes
-const indexRouter = require("./routes/index")
-const inventoryRoutes = require("./routes/inventory-routes")
+const indexRouter = require("./routes/index");
+const inventoryRoutes = require("./routes/inventory-routes");
 
-app.use("/", indexRouter)
-app.use("/inv", inventoryRoutes)
+app.use("/", indexRouter);
+app.use("/inv", inventoryRoutes);
 
-// 404 handler (must be last route before error middleware)
+// 404 handler
 app.use(async (req, res) => {
-  const nav = await utilities.getNav()
+  const nav = await utilities.getNav();
   res.status(404).render("errors/404", {
     title: "Page Not Found",
     message: "The page you are looking for does not exist.",
     nav,
-  })
-})
+  });
+});
 
-// Error handler middleware
+// Error handler
 app.use(async (err, req, res, next) => {
-  const nav = await utilities.getNav()
-  console.error(`Error at "${req.originalUrl}": ${err.message}`)
-
+  const nav = await utilities.getNav();
+  console.error(`Error at "${req.originalUrl}":`, err);
   if (err.status === 404) {
     res.status(404).render("errors/404", {
       title: "404 - Page Not Found",
       message: err.message,
       nav,
-    })
-  } else {
-    res.status(500).render("errors/500", {
-      title: "500 - Server Error",
-      message:
-        process.env.NODE_ENV === "production"
-          ? "Something went wrong on our end. Please try again later."
-          : err.message,
-      nav,
-    })
+    });
+    return;
   }
-})
+  res.status(500).render("errors/500", {
+    title: "500 - Server Error",
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Something went wrong on our end. Please try again later."
+        : err.message,
+    nav,
+  });
+});
 
 // Start server
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`)
+  console.log(`Server running on http://localhost:${port}`);
 
-  // Test database connection
   pool.query("SELECT NOW()", (err, result) => {
     if (err) {
-      console.error("Database connection test failed:", err)
+      console.error("Database connection test failed:", err.message);
     } else {
-      console.log("Database connection successful:", result.rows[0].now)
+      console.log("Database connection OK:", result.rows[0].now);
     }
-  })
-})
+  });
+});
 
-module.exports = app
+module.exports = app;

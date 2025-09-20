@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('../partials/head', {title: title}) %>
+<head>
+  <%- include("../partials/head") %>
+  <title><%= title %> | Motors</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <%- include('../partials/header') %>
-    <%- include('../partials/nav', {title: title}) %>
+  <header>
+    <%- include("../partials/header") %>
+    <nav>
+      <%- include("../partials/nav", { nav: nav }) %>
+    </nav>
+  </header>
 
-    <main id="main-content" role="main">
-        <div class="container">
-            <%- body %>
-        </div>
-    </main>
+  <main>
+    <%- body %>
+  </main>
 
-    <%- include('../partials/footer') %>
+  <footer>
+    <%- include("../partials/footer") %>
+  </footer>
 </body>
 </html>

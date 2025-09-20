@@ -1,14 +1,15 @@
-const express = require('express');
+// routes/index.js
+const express = require("express");
 const router = express.Router();
-const invController = require('../controllers/invController');
+const utilities = require("../utilities");
 
-// Home page route
-router.get('/', function(req, res) {
-  res.render('index', { title: 'CSE Motors Home' });
+router.get("/", async (req, res, next) => {
+  try {
+    const nav = await utilities.getNav();
+    res.render("index", { title: "Home", nav });
+  } catch (err) {
+    next(err);
+  }
 });
-
-// Inventory routes - Learning Activity 1
-router.get('/inv', invController.buildInventory);
-router.get('/inv/classification/:classificationId', invController.buildByClassificationId);
 
 module.exports = router;
