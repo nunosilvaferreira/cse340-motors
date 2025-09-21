@@ -1,23 +1,19 @@
 // database/db.js
-const { Pool } = require("pg");
+const { Pool } = require("pg")
 
-const connectionString =
-  process.env.DATABASE_URL || "postgresql://user:pass@localhost:5432/motors";
+// Use DATABASE_URL if available (Render), otherwise fall back to local settings
+const connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/motors_nuip"
 
-const poolConfig = {
+const pool = new Pool({
   connectionString,
-};
-
-// If Render or external DB, enable SSL
-if (connectionString && connectionString.includes("render.com")) {
-  poolConfig.ssl = { rejectUnauthorized: false };
-}
-
-const pool = new Pool(poolConfig);
+  ssl: connectionString.includes("render.com")
+    ? { rejectUnauthorized: false }
+    : false,
+})
 
 pool.on("error", (err) => {
-  console.error("Unexpected error on idle client", err);
-  process.exit(-1);
-});
+  console.error("Unexpected error on idle client", err)
+  process.exit(-1)
+})
 
-module.exports = pool;
+module.exports = pool

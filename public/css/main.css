@@ -2,19 +2,19 @@
    Global Styles & Variables - IMPROVED
    ========================== */
 :root {
-  --primary-color: #2c3e50;           /* Dark blue - good */
-  --secondary-color: #e74c3c;         /* Brighter red for better contrast */
-  --accent-color: #3498db;            /* Brighter blue */
-  --text-color: #2c3e50;
-  --background-color: #f8f9fa;        /* Lighter background */
+  --primary-color: #003366;       /* Azul escuro mais limpo */
+  --secondary-color: #d62828;     /* Vermelho vivo, bom contraste */
+  --accent-color: #0077b6;        /* Azul médio/brilhante */
+  --text-color: #222222;          /* Texto escuro mas não preto absoluto */
+  --background-color: #fdfdfd;    /* Branco quase puro */
   --white: #ffffff;
-  --light-gray: #ecf0f1;
-  --medium-gray: #bdc3c7;
-  --dark-gray: #34495e;
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --border-color: #ddd;
-  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+  --light-gray: #f1f3f5;          /* Cinza clarinho para caixas */
+  --medium-gray: #adb5bd;
+  --dark-gray: #343a40;
+  --success-color: #2a9d8f;       /* Verde moderno */
+  --warning-color: #f4a261;       /* Laranja suave */
+  --border-color: #dee2e6;
+  --shadow: 0 4px 8px rgba(0,0,0,0.08);
   --transition: all 0.3s ease;
 }
 
@@ -332,13 +332,150 @@ nav a[aria-current="page"] {
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-color: #1a1a1a;
-    --text-color: #ffffff;
-    --white: #2d2d2d;
-    --light-gray: #3d3d3d;
-    --border-color: #555;
-  }
+
+
+/* ==========================
+   Vehicle Detail Page
+   ========================== */
+.vehicle-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin: 2rem auto;
+  max-width: 1000px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
+}
+
+.vehicle-detail img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: var(--transition);
+}
+
+.vehicle-detail img:hover {
+  transform: scale(1.02);
+}
+
+.vehicle-detail-info h2 {
+  color: var(--secondary-color);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.vehicle-detail-info p {
+  margin-bottom: 0.8rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.vehicle-detail-info strong {
+  color: var(--primary-color);
+}
+
+/* ==========================
+   Popular Upgrades
+   ========================== */
+.upgrades {
+  margin: 3rem auto;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  max-width: 1000px;
+}
+
+.upgrades h3 {
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.upgrades h3::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: var(--secondary-color);
+  margin: 1rem auto 0;
+  border-radius: 2px;
+}
+
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.upgrade-item {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.upgrade-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.upgrade-item img {
+  max-width: 80px;
+  margin-bottom: 1rem;
+}
+
+.upgrade-item h4 {
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* ==========================
+   Customer Reviews
+   ========================== */
+.reviews {
+  margin: 3rem auto;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  max-width: 1000px;
+}
+
+.reviews h3 {
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.reviews ul {
+  list-style: none;
+  padding: 0;
+}
+
+.reviews li {
+  background: var(--white);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--secondary-color);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  color: var(--text-color);
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.reviews li:hover {
+  transform: translateX(5px);
+  border-color: var(--accent-color);
 }
