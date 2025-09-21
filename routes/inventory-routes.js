@@ -1,7 +1,7 @@
 // routes/inventory-routes.js
 const express = require("express");
 const router = express.Router();
-const invController = require("../controllers/inventoryController");
+const invController = require("../controllers/invController");
 
 // all inventory
 router.get("/", invController.buildInventory);
