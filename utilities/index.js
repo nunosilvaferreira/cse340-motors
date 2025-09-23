@@ -20,6 +20,37 @@ utilities.getNav = async function () {
 };
 
 /**
+ * Helpers for formatting and image path
+ */
+function buildImagePath(img) {
+  if (!img) return "/images/no-image.png";
+  let p = String(img).trim();
+  // remove leading slashes
+  p = p.replace(/^\/+/, "");
+  // ensure it starts with "images/"
+  if (!/^images\//.test(p)) {
+    p = "images/" + p;
+  }
+  // normalize repeated slashes
+  p = p.replace(/\/+/g, "/");
+  return "/" + p;
+}
+
+function formatNumber(n) {
+  const num = Number(n) || 0;
+  return num.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+function formatCurrency(n) {
+  const num = Number(n) || 0;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(num);
+}
+
+/**
  * Build vehicle detail HTML
  */
 utilities.buildVehicleDetail = function (vehicle) {
@@ -27,19 +58,14 @@ utilities.buildVehicleDetail = function (vehicle) {
     return "<p>Vehicle information not available.</p>";
   }
 
-  const fmtCurrency = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-  const fmtNumber = new Intl.NumberFormat("en-US");
-
   const make = vehicle.inv_make || "";
   const model = vehicle.inv_model || "";
   const year = vehicle.inv_year || "";
   const price =
     vehicle.inv_price !== undefined && vehicle.inv_price !== null
-      ? fmtCurrency.format(Number(vehicle.inv_price))
+      ? formatCurrency(vehicle.inv_price)
       : "N/A";
+
   const rawMileage =
     vehicle.inv_mileage ||
     vehicle.inv_miles ||
@@ -47,12 +73,12 @@ utilities.buildVehicleDetail = function (vehicle) {
     vehicle.mileage;
   const mileage =
     rawMileage !== undefined && rawMileage !== null
-      ? fmtNumber.format(Number(rawMileage))
+      ? formatNumber(rawMileage)
       : "N/A";
 
   const imgFile =
     vehicle.inv_image || vehicle.inv_image_full || "no-image.png";
-  const imgSrc = `/images/${imgFile}`;
+  const imgSrc = buildImagePath(imgFile);
   const title = `${make} ${model}`.trim();
 
   const html = `
@@ -72,7 +98,11 @@ utilities.buildVehicleDetail = function (vehicle) {
               : "<p>No description available.</p>"
           }
         </div>
-        ${vehicle.inv_color ? `<p><strong>Color:</strong> ${vehicle.inv_color}</p>` : ""}
+        ${
+          vehicle.inv_color
+            ? `<p><strong>Color:</strong> ${vehicle.inv_color}</p>`
+            : ""
+        }
         ${
           vehicle.inv_transmission
             ? `<p><strong>Transmission:</strong> ${vehicle.inv_transmission}</p>`
@@ -96,5 +126,10 @@ utilities.buildVehicleDetail = function (vehicle) {
   `;
   return html;
 };
+
+// Export helpers too (so views can use them via app.locals)
+utilities.buildImagePath = buildImagePath;
+utilities.formatNumber = formatNumber;
+utilities.formatCurrency = formatCurrency;
 
 module.exports = utilities;

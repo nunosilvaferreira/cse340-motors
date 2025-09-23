@@ -28,6 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Expose utilities to views
+app.locals.buildImagePath = utilities.buildImagePath;
+app.locals.formatCurrency = utilities.formatCurrency;
+app.locals.formatNumber = utilities.formatNumber;
+
 // Routes
 const indexRouter = require("./routes/index");
 const inventoryRoutes = require("./routes/inventory-routes");
@@ -45,10 +50,11 @@ app.use(async (req, res) => {
   });
 });
 
-// Error handler
+// Error handler (500 and others)
 app.use(async (err, req, res, next) => {
   const nav = await utilities.getNav();
   console.error(`Error at "${req.originalUrl}":`, err);
+
   if (err.status === 404) {
     res.status(404).render("errors/404", {
       title: "404 - Page Not Found",
@@ -57,6 +63,7 @@ app.use(async (err, req, res, next) => {
     });
     return;
   }
+
   res.status(500).render("errors/500", {
     title: "500 - Server Error",
     message:
@@ -72,6 +79,7 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 
+  // Quick DB connection test
   pool.query("SELECT NOW()", (err, result) => {
     if (err) {
       console.error("Database connection test failed:", err.message);

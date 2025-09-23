@@ -1,23 +1,52 @@
-<h2><%= title %></h2>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <%- include("../partials/header") %>
 
-<% if (data && data.length > 0) { %>
-  <section class="inventory-grid">
-    <% data.forEach(item => { %>
-      <article class="vehicle-card">
-        <h3>
-          <a href="/inv/detail/<%= item.inv_id %>">
-            <%= item.inv_make %> <%= item.inv_model %>
-          </a>
-        </h3>
-        <p class="vehicle-year">Year: <%= item.inv_year %></p>
-        <p class="vehicle-price">Price: $<%= item.inv_price %></p>
-        <% if (item.inv_description) { %>
-          <p class="vehicle-description"><%= item.inv_description %></p>
-        <% } %>
-        <a href="/inv/detail/<%= item.inv_id %>" class="btn-primary">View Details</a>
-      </article>
-    <% }) %>
-  </section>
-<% } else { %>
-  <p class="no-vehicles">No vehicles found for this classification.</p>
-<% } %>
+  <main>
+    <h2><%= title %></h2>
+
+    <% if (data && data.length > 0) { %>
+      <section class="inventory-grid">
+        <% data.forEach(item => { %>
+          <article class="vehicle-card">
+            <a href="/inv/detail/<%= item.inv_id %>">
+              <img src="<%= buildImagePath(item.inv_image) %>" 
+                   alt="<%= item.inv_make + ' ' + item.inv_model %>" 
+                   class="vehicle-thumb" />
+            </a>
+
+            <h3>
+              <a href="/inv/detail/<%= item.inv_id %>">
+                <%= item.inv_make %> <%= item.inv_model %>
+              </a>
+            </h3>
+
+            <p class="vehicle-year">Year: <%= item.inv_year %></p>
+            <p class="vehicle-price">Price: <%= formatCurrency(item.inv_price) %></p>
+
+            <% if (item.inv_miles) { %>
+              <p class="vehicle-miles">Mileage: <%= formatNumber(item.inv_miles) %> miles</p>
+            <% } %>
+
+            <% if (item.inv_description) { %>
+              <p class="vehicle-description"><%= item.inv_description %></p>
+            <% } %>
+
+            <a href="/inv/detail/<%= item.inv_id %>" class="btn-primary">View Details</a>
+          </article>
+        <% }) %>
+      </section>
+    <% } else { %>
+      <p class="no-vehicles">No vehicles found for this classification.</p>
+    <% } %>
+  </main>
+<
+  </body>
+</html>

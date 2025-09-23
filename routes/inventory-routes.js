@@ -1,22 +1,24 @@
 // routes/inventory-routes.js
+
 const express = require("express");
 const router = express.Router();
-const invController = require("../controllers/invController");
+const inventoryController = require("../controllers/invController");
 
-// all inventory
-router.get("/", invController.buildInventory);
+// Inventory by classification
+router.get(
+  "/classification/:classificationId",
+  inventoryController.buildByClassificationId
+);
 
-// inventory by classification
-router.get("/classification/:classificationId", invController.buildByClassificationId);
+// Vehicle detail
+router.get("/detail/:invId", inventoryController.buildVehicleDetail);
 
-// vehicle detail
-router.get("/detail/:invId", invController.buildVehicleDetail);
+// Full inventory list (optional, if you want a route for all vehicles)
+router.get("/inventory", inventoryController.buildInventory);
 
-// intentional 500 error for testing
-router.get("/cause-error", (req, res, next) => {
-  const err = new Error("Intentional server error for testing");
-  err.status = 500;
-  next(err);
+// New error route for testing 500
+router.get("/error", (req, res, next) => {
+  next(new Error("Intentional 500 error for testing (footer link)"));
 });
 
 module.exports = router;
