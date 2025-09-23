@@ -479,3 +479,11 @@ nav a[aria-current="page"] {
   transform: translateX(5px);
   border-color: var(--accent-color);
 }
+
+.vehicle-thumb {
+  max-width: 500px;  
+  height: auto;      
+  display: left;     
+  margin: 0 auto;     
+  border-radius: 5px; 
+}
