@@ -1,0 +1,7 @@
+<%- include('../layouts/layout.ejs') %>
+<h2>Account Management</h2>
+<p>Welcome <%= res.locals.accountData ? res.locals.accountData.account_firstname : "" %>!</p>
+<ul>
+  <li><a href="/inventory/management">Manage Inventory</a></li>
+  <li><a href="/account/logout">Logout</a></li>
+</ul>

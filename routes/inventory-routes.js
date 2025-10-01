@@ -1,48 +1,82 @@
 // routes/inventory-routes.js
-const express = require("express");
-const router = express.Router();
-const inventoryController = require("../controllers/invController");
-const validation = require("../utilities/validationMiddleware");
+const express = require("express")
+const router = express.Router()
+const inventoryController = require("../controllers/invController")
+const validation = require("../utilities/validationMiddleware")
+const utilities = require("../utilities/")
 
 // Inventory by classification
 router.get(
   "/classification/:classificationId",
-  inventoryController.buildByClassificationId
-);
+  utilities.handleErrors(inventoryController.buildByClassificationId)
+)
 
 // Vehicle detail
-router.get("/detail/:invId", inventoryController.buildVehicleDetail);
+router.get(
+  "/detail/:invId",
+  utilities.handleErrors(inventoryController.buildVehicleDetail)
+)
 
 // Full inventory list
-router.get("/inventory", inventoryController.buildInventory);
+router.get(
+  "/inventory",
+  utilities.handleErrors(inventoryController.buildInventory)
+)
 
-// New error route for testing 500
+// Error test
 router.get("/error", (req, res, next) => {
-  next(new Error("Intentional 500 error for testing (footer link)"));
-});
+  next(new Error("Intentional 500 error for testing (footer link)"))
+})
 
 // ========================
 // W04 additions
 // ========================
 
-// Inventory management page
-router.get("/management", inventoryController.buildManagement);
+// Inventory management page (🔒 protected)
+router.get(
+  "/management",
+  utilities.checkJWT,
+  utilities.handleErrors(inventoryController.buildManagement)
+)
 
-// Process new classification
+// Process new classification (🔒 protected)
 router.post(
   "/classification/add",
+  utilities.checkJWT,
   validation.validateClassification,
-  inventoryController.addClassification
-);
+  utilities.handleErrors(inventoryController.addClassification)
+)
 
-// Show add-vehicle form
-router.get("/vehicle/add", inventoryController.buildAddVehicle);
+// Show add-vehicle form (🔒 protected)
+router.get(
+  "/vehicle/add",
+  utilities.checkJWT,
+  utilities.handleErrors(inventoryController.buildAddVehicle)
+)
 
-// Process new vehicle
+// Process new vehicle (🔒 protected)
 router.post(
   "/vehicle/add",
+  utilities.checkJWT,
   validation.validateVehicle,
-  inventoryController.addVehicle
-);
+  utilities.handleErrors(inventoryController.addVehicle)
+)
 
-module.exports = router;
+// ========================
+// W05 additions
+// ========================
+
+// Edit vehicle (🔒 protected)
+router.get(
+  "/edit/:invId",
+  utilities.checkJWT,
+  utilities.handleErrors(inventoryController.buildEditVehicle)
+)
+
+router.post(
+  "/update",
+  utilities.checkJWT,
+  utilities.handleErrors(inventoryController.updateVehicle)
+)
+
+module.exports = router

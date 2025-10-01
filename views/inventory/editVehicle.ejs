@@ -1,0 +1,33 @@
+<%- include('../layouts/layout.ejs') %>
+<h2>Edit Vehicle</h2>
+<form action="/inventory/update" method="post">
+  <input type="hidden" name="inv_id" value="<%= vehicle.inv_id %>">
+  
+  <label>Classification:</label>
+  <select name="classification_id">
+    <% classifications.forEach(c => { %>
+      <option value="<%= c.classification_id %>" <%= c.classification_id === vehicle.classification_id ? "selected" : "" %>><%= c.classification_name %></option>
+    <% }) %>
+  </select>
+  
+  <label>Make:</label>
+  <input type="text" name="make" value="<%= vehicle.inv_make %>">
+  <label>Model:</label>
+  <input type="text" name="model" value="<%= vehicle.inv_model %>">
+  <label>Year:</label>
+  <input type="number" name="year" value="<%= vehicle.inv_year %>">
+  <label>Description:</label>
+  <textarea name="description"><%= vehicle.inv_description %></textarea>
+  <label>Price:</label>
+  <input type="number" name="price" value="<%= vehicle.inv_price %>">
+  <label>Miles:</label>
+  <input type="number" name="miles" value="<%= vehicle.inv_miles %>">
+  <label>Color:</label>
+  <input type="text" name="color" value="<%= vehicle.inv_color %>">
+  <label>Image Path:</label>
+  <input type="text" name="image" value="<%= vehicle.inv_image %>">
+  <label>Thumbnail Path:</label>
+  <input type="text" name="thumbnail" value="<%= vehicle.inv_thumbnail %>">
+  
+  <button type="submit" class="btn btn-primary">Update Vehicle</button>
+</form>

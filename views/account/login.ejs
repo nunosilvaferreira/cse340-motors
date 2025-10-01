@@ -1,0 +1,9 @@
+<%- include('../layouts/layout.ejs') %>
+<h2>Login</h2>
+<form id="loginForm" action="/account/login" method="post">
+  <label>Email:</label>
+  <input type="email" name="account_email" required>
+  <label>Password:</label>
+  <input type="password" name="account_password" required>
+  <button type="submit" class="btn btn-primary">Login</button>
+</form>

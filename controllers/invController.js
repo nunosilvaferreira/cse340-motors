@@ -185,4 +185,53 @@ invController.addVehicle = async function (req, res, next) {
   }
 };
 
+/* =========================
+   W05 Additions
+   ========================= */
+
+
+/**
+ * Build edit vehicle form
+ */
+invController.buildEditVehicle = async function (req, res, next) {
+  try {
+    const invId = req.params.invId
+    const vehicle = await invModel.getInventoryById(invId)
+    const classifications = await classificationModel.getAllClassifications()
+    const nav = await utilities.getNav()
+
+    res.render("inventory/editVehicle", {
+      title: "Edit Vehicle",
+      nav,
+      classifications,
+      vehicle,
+      messages: [],
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Update vehicle (POST)
+ */
+invController.updateVehicle = async function (req, res, next) {
+  try {
+    const { inv_id, classification_id, make, model, year, description, price, miles, color, image, thumbnail } = req.body
+    const sql = `
+      UPDATE inventory
+      SET classification_id=$1, inv_make=$2, inv_model=$3, inv_year=$4, inv_description=$5,
+          inv_price=$6, inv_miles=$7, inv_color=$8, inv_image=$9, inv_thumbnail=$10
+      WHERE inv_id=$11
+    `
+    await require("../database/db").query(sql, [classification_id, make, model, year, description, price, miles, color, image, thumbnail, inv_id])
+
+    req.session.messages = [{ type: "success", text: "Vehicle updated successfully." }]
+    res.redirect("/inventory/management")
+  } catch (err) {
+    req.session.messages = [{ type: "error", text: "Error updating vehicle." }]
+    res.redirect(`/inventory/edit/${req.body.inv_id}`)
+  }
+}
+
 module.exports = invController;
