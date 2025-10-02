@@ -55,8 +55,6 @@ views/
 account/ (login.ejs, register.ejs, management.ejs)
 inventory/ (editVehicle.ejs + existing views)
 
-yaml
-Copiar código
 
 ---
 
@@ -66,22 +64,18 @@ Copiar código
    ```bash
    git clone https://github.com/nunosilvaferreira/cse340-motors.git
    cd cse340-motors
+   
 Install dependencies:
 
-bash
-Copiar código
 npm install
 Create a .env file in the root folder:
 
-env
-Copiar código
 DATABASE_URL=postgresql://username:password@host:5432/dbname?ssl=true
 NODE_ENV=development
 ACCESS_TOKEN_SECRET=your_random_generated_secret
 Run the server:
 
-bash
-Copiar código
+
 npm start
 Open in browser:
 
