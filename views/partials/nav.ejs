@@ -1,7 +1,7 @@
 <%- nav %>
 
 <ul class="account-nav">
-  <% if (res.locals.accountData) { %>
+  <% if (accountData) { %>
     <li><a href="/account/">Account</a></li>
     <li><a href="/account/logout">Logout</a></li>
   <% } else { %>
@@ -9,16 +9,3 @@
     <li><a href="/account/register">Register</a></li>
   <% } %>
 </ul>
-
-<style>
-  .account-nav {
-    display: inline-flex;
-    gap: 1rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .account-nav li a {
-    text-decoration: none;
-  }
-</style>
