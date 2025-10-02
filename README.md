@@ -1,133 +1,96 @@
-📘 W04 – Inventory Management Features
-Overview
+# CSE 340 Motors – Week 05
 
-In Week 04, the project was extended with full Inventory Management functionality.
-The new features allow administrators to:
+## Overview
+This is the continuation of the **Motors project** for CSE 340.  
+In **Week 05**, authentication and authorization were added using **JWT**, and the **Team Activity** was completed (update vehicle data).
 
-Add new vehicle classifications.
+Live project: [Render Deployment](https://cse340-motors-iwkd.onrender.com/)
 
-Add new vehicles with all required details.
+---
 
-Use server-side validation to ensure data integrity.
+## Features Implemented in W05
 
-Display flash messages for success or error.
+### 🔑 Learning Activities
+- **User Registration & Login**  
+  - Secure registration with hashed passwords (`bcryptjs`).  
+  - User login using JWT, with token stored in an **HTTPOnly cookie**.  
 
-Maintain sticky form values when validation fails.
+- **Account Management Page**  
+  - New `/account/` route that loads after successful login.  
+  - Includes links to inventory management and logout.  
 
-🔧 New Files
+- **Route Protection with JWT**  
+  - Middleware `checkJWT` ensures that only logged-in users can access management pages:  
+    - `/inventory/management`  
+    - `/inventory/vehicle/add`  
+    - `/inventory/classification/add`  
+    - `/inventory/edit/:id`  
+    - `/inventory/update`  
 
-Models
+- **Error Handling Middleware**  
+  - `handleErrors` wrapper added to catch async controller errors and pass them to Express error handling.  
 
-models/classificationModel.js
+### 👥 Team Activity
+- **Update Vehicle Functionality**  
+  - Added controller methods `buildEditVehicle` and `updateVehicle`.  
+  - New route `/inventory/edit/:invId` shows a form with the vehicle’s current data.  
+  - Submitting the form updates the database record and redirects to `/inventory/management`.  
+  - New view `views/inventory/editVehicle.ejs`.  
 
-models/vehicleModel.js
+---
 
-Utilities
+## Project Structure
 
-utilities/validationMiddleware.js
+controllers/
+accountController.js
+invController.js
+models/
+accountModel.js
+routes/
+account-routes.js
+inventory-routes.js
+utilities/
+index.js (getNav, checkJWT, handleErrors, helpers)
+views/
+account/ (login.ejs, register.ejs, management.ejs)
+inventory/ (editVehicle.ejs + existing views)
 
-Views
+yaml
+Copiar código
 
-views/inventory/management.ejs
+---
 
-views/inventory/addVehicle.ejs
+## How to Run Locally
 
-✏️ Updated Files
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/nunosilvaferreira/cse340-motors.git
+   cd cse340-motors
+Install dependencies:
 
-Routes
+bash
+Copiar código
+npm install
+Create a .env file in the root folder:
 
-routes/inventory-routes.js
+env
+Copiar código
+DATABASE_URL=postgresql://username:password@host:5432/dbname?ssl=true
+NODE_ENV=development
+ACCESS_TOKEN_SECRET=your_random_generated_secret
+Run the server:
 
-Added routes for management, classification creation, and vehicle creation.
+bash
+Copiar código
+npm start
+Open in browser:
 
-Controllers
+Register: http://localhost:3000/account/register
 
-controllers/invController.js
+Login: http://localhost:3000/account/login
 
-Added buildManagement, addClassification, buildAddVehicle, and addVehicle methods.
+Account Management: http://localhost:3000/account/
 
-🗂️ Database Schema
-
-The following tables were used (already defined in create-tables.sql):
-
-classification
-
-CREATE TABLE classification (
-    classification_id SERIAL PRIMARY KEY,
-    classification_name VARCHAR(100) NOT NULL
-);
-
-
-inventory
-
-CREATE TABLE inventory (
-    inv_id SERIAL PRIMARY KEY,
-    inv_make VARCHAR(100) NOT NULL,
-    inv_model VARCHAR(100) NOT NULL,
-    inv_year INTEGER NOT NULL,
-    inv_description TEXT NOT NULL,
-    inv_image VARCHAR(255) NOT NULL DEFAULT '/images/vehicle-default.jpg',
-    inv_thumbnail VARCHAR(255) NOT NULL DEFAULT '/images/vehicle-default-tn.jpg',
-    inv_price DECIMAL(10,2) NOT NULL,
-    inv_miles INTEGER NOT NULL,
-    inv_color VARCHAR(50) NOT NULL,
-    classification_id INTEGER REFERENCES classification(classification_id)
-);
-
-🚀 New Routes
-Route	Method	Description
-/inventory/management	GET	Show management page (classifications + add form).
-/inventory/classification/add	POST	Add new classification (validated, duplicate check).
-/inventory/vehicle/add	GET	Show add vehicle form.
-/inventory/vehicle/add	POST	Insert a new vehicle (validated, sticky form on error).
-✅ Validation
-
-Implemented in utilities/validationMiddleware.js:
-
-Classification
-
-Name must be at least 2 characters.
-
-Vehicle
-
-All required fields validated (make, model, year, description, price, miles, color).
-
-Year, price, and miles must be numbers.
-
-Description requires at least 10 characters.
-
-💡 User Experience
-
-Forms retain values after validation errors (sticky inputs).
-
-Success and error messages displayed on each page.
-
-Default images used if no custom image/thumbnail is provided.
-
-🖥️ Testing
-
-Navigate to /inventory/management.
-
-View existing classifications.
-
-Add a new classification (error if duplicate).
-
-Navigate to /inventory/vehicle/add.
-
-Add a new vehicle with all required details.
-
-Test validation by leaving fields blank or invalid.
-
-On success, vehicle is stored in DB and visible in classification listings.
-
-🎯 Deliverables
-
-Server-side validation implemented.
-
-Sticky inputs working.
-
-Flash messages working.
-
-New database records created successfully.
-
-This ensures the project meets all W04 requirements.
+Deployment
+The project is deployed on Render:
+👉 https://cse340-motors-iwkd.onrender.com/
