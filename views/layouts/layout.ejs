@@ -9,8 +9,9 @@
   <header>
     <%- include("../partials/header") %>
     <nav>
-      <%- include("../partials/nav", { nav: nav }) %>
+      <%- include("../partials/nav", { nav: nav, accountData: typeof accountData !== 'undefined' ? accountData : null }) %>
     </nav>
+
   </header>
 
   <main>
