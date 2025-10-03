@@ -36,9 +36,11 @@ app.locals.formatNumber = utilities.formatNumber;
 // Routes
 const indexRouter = require("./routes/index");
 const inventoryRoutes = require("./routes/inventory-routes");
+const accountRoutes = require("./routes/account-routes"); // New account routes
 
 app.use("/", indexRouter);
 app.use("/inv", inventoryRoutes);
+app.use("/account", accountRoutes); // Use account routes
 
 // 404 handler
 app.use(async (req, res) => {
