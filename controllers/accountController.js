@@ -10,10 +10,12 @@ require("dotenv").config()
  **************************************** */
 async function buildLogin(req, res) {
   let nav = await utilities.getNav()
+  const messages = req.flash()
   res.render("account/login", {
     title: "Login",
     nav,
     errors: null,
+    messages
   })
 }
 
@@ -22,10 +24,12 @@ async function buildLogin(req, res) {
  **************************************** */
 async function buildRegister(req, res) {
   let nav = await utilities.getNav()
+  const messages = req.flash()
   res.render("account/register", {
     title: "Register",
     nav,
     errors: null,
+    messages
   })
 }
 
@@ -36,26 +40,49 @@ async function registerAccount(req, res) {
   const { account_firstname, account_lastname, account_email, account_password } = req.body
   let nav = await utilities.getNav()
 
-  const hashedPassword = await bcrypt.hash(account_password, 10)
-
   try {
+    // Check if email already exists
+    const existingAccount = await accountModel.getAccountByEmail(account_email)
+    if (existingAccount) {
+      req.flash("error", "Email already exists. Please use a different email.")
+      return res.status(400).render("account/register", { 
+        title: "Register", 
+        nav, 
+        errors: null,
+        messages: req.flash()
+      })
+    }
+
+    const hashedPassword = await bcrypt.hash(account_password, 10)
+
     const regResult = await accountModel.registerAccount(
       account_firstname,
       account_lastname,
       account_email,
       hashedPassword
     )
+    
     if (regResult) {
-      req.flash("notice", "Registration successful. Please log in.")
-      res.status(201).redirect("/account/login")
+      req.flash("success", "Registration successful. Please log in.")
+      return res.status(201).redirect("/account/login")
     } else {
-      req.flash("notice", "Registration failed. Please try again.")
-      res.status(501).render("account/register", { title: "Register", nav, errors: null })
+      req.flash("error", "Registration failed. Please try again.")
+      return res.status(501).render("account/register", { 
+        title: "Register", 
+        nav, 
+        errors: null,
+        messages: req.flash()
+      })
     }
   } catch (error) {
-    console.error(error)
-    req.flash("notice", "Registration error. Try again.")
-    res.status(500).render("account/register", { title: "Register", nav, errors: null })
+    console.error("Registration error:", error)
+    req.flash("error", "Registration error. Please try again.")
+    return res.status(500).render("account/register", { 
+      title: "Register", 
+      nav, 
+      errors: null,
+      messages: req.flash()
+    })
   }
 }
 
@@ -70,12 +97,13 @@ async function accountLogin(req, res) {
     const accountData = await accountModel.getAccountByEmail(account_email)
 
     if (!accountData) {
-      req.flash("notice", "Please check your credentials and try again.")
+      req.flash("error", "Please check your credentials and try again.")
       return res.status(400).render("account/login", { 
         title: "Login", 
         nav, 
         errors: null, 
-        account_email 
+        account_email,
+        messages: req.flash()
       })
     }
 
@@ -91,23 +119,26 @@ async function accountLogin(req, res) {
         res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600000 })
       }
 
+      req.flash("success", `Welcome back, ${accountData.account_firstname}!`)
       return res.redirect("/account/")
     } else {
-      req.flash("notice", "Invalid credentials.")
-      res.status(400).render("account/login", { 
+      req.flash("error", "Invalid credentials.")
+      return res.status(400).render("account/login", { 
         title: "Login", 
         nav, 
         errors: null, 
-        account_email 
+        account_email,
+        messages: req.flash()
       })
     }
   } catch (error) {
     console.error("Login error:", error)
-    req.flash("notice", "Login error. Please try again.")
-    res.status(500).render("account/login", { 
+    req.flash("error", "Login error. Please try again.")
+    return res.status(500).render("account/login", { 
       title: "Login", 
       nav, 
-      errors: null 
+      errors: null,
+      messages: req.flash()
     })
   }
 }
@@ -118,6 +149,7 @@ async function accountLogin(req, res) {
 async function buildAccountManagement(req, res) {
   let nav = await utilities.getNav()
   const accountData = res.locals.accountData
+  const messages = req.flash()
   
   let greeting = ""
   let managementLink = ""
@@ -136,7 +168,8 @@ async function buildAccountManagement(req, res) {
     errors: null,
     greeting,
     managementLink,
-    accountData
+    accountData,
+    messages
   })
 }
 
@@ -146,6 +179,7 @@ async function buildAccountManagement(req, res) {
 async function buildAccountUpdate(req, res) {
   let nav = await utilities.getNav()
   const accountData = res.locals.accountData
+  const messages = req.flash()
 
   res.render("account/update", {
     title: "Update Account",
@@ -154,7 +188,8 @@ async function buildAccountUpdate(req, res) {
     account_firstname: accountData.account_firstname,
     account_lastname: accountData.account_lastname,
     account_email: accountData.account_email,
-    account_id: accountData.account_id
+    account_id: accountData.account_id,
+    messages
   })
 }
 
@@ -169,7 +204,7 @@ async function updateAccount(req, res) {
     // Check if email already exists (excluding current account)
     const emailExists = await accountModel.checkEmailExists(account_email, account_id)
     if (emailExists) {
-      req.flash("notice", "Email already exists. Please use a different email.")
+      req.flash("error", "Email already exists. Please use a different email.")
       return res.status(400).render("account/update", {
         title: "Update Account",
         nav,
@@ -177,7 +212,8 @@ async function updateAccount(req, res) {
         account_firstname,
         account_lastname,
         account_email,
-        account_id
+        account_id,
+        messages: req.flash()
       })
     }
 
@@ -198,31 +234,33 @@ async function updateAccount(req, res) {
         res.cookie("jwt", accessToken, { httpOnly: true, secure: true, maxAge: 3600000 })
       }
 
-      req.flash("notice", "Account updated successfully.")
-      res.redirect("/account/")
+      req.flash("success", "Account updated successfully.")
+      return res.redirect("/account/")
     } else {
-      req.flash("notice", "Account update failed.")
-      res.status(501).render("account/update", {
+      req.flash("error", "Account update failed.")
+      return res.status(501).render("account/update", {
         title: "Update Account",
         nav,
         errors: null,
         account_firstname,
         account_lastname,
         account_email,
-        account_id
+        account_id,
+        messages: req.flash()
       })
     }
   } catch (error) {
     console.error("Update account error:", error)
-    req.flash("notice", "Account update error.")
-    res.status(500).render("account/update", {
+    req.flash("error", "Account update error.")
+    return res.status(500).render("account/update", {
       title: "Update Account",
       nav,
       errors: null,
       account_firstname,
       account_lastname,
       account_email,
-      account_id
+      account_id,
+      messages: req.flash()
     })
   }
 }
@@ -232,23 +270,22 @@ async function updateAccount(req, res) {
  **************************************** */
 async function updatePassword(req, res) {
   const { account_id, account_password } = req.body
-  let nav = await utilities.getNav()
 
   try {
     const hashedPassword = await bcrypt.hash(account_password, 10)
     const updateResult = await accountModel.updatePassword(account_id, hashedPassword)
 
     if (updateResult) {
-      req.flash("notice", "Password updated successfully.")
-      res.redirect("/account/")
+      req.flash("success", "Password updated successfully.")
+      return res.redirect("/account/")
     } else {
-      req.flash("notice", "Password update failed.")
-      res.redirect("/account/update")
+      req.flash("error", "Password update failed.")
+      return res.redirect("/account/update")
     }
   } catch (error) {
     console.error("Update password error:", error)
-    req.flash("notice", "Password update error.")
-    res.redirect("/account/update")
+    req.flash("error", "Password update error.")
+    return res.redirect("/account/update")
   }
 }
 
@@ -257,7 +294,7 @@ async function updatePassword(req, res) {
  **************************************** */
 function logout(req, res) {
   res.clearCookie("jwt")
-  req.flash("notice", "You have been logged out.")
+  req.flash("success", "You have been logged out.")
   res.redirect("/")
 }
 

@@ -2,6 +2,9 @@
 const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const flash = require("express-flash");
 
 // Load environment variables early
 if (process.env.NODE_ENV !== "production") {
@@ -24,6 +27,29 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Cookie parser
+app.use(cookieParser());
+
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'motors-session-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 3600000 // 1 hour
+  }
+}));
+
+// Flash messages
+app.use(flash());
+
+// Make flash messages available to all views
+app.use((req, res, next) => {
+  res.locals.messages = req.flash();
+  next();
+});
+
 // Views
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -36,11 +62,11 @@ app.locals.formatNumber = utilities.formatNumber;
 // Routes
 const indexRouter = require("./routes/index");
 const inventoryRoutes = require("./routes/inventory-routes");
-const accountRoutes = require("./routes/account-routes"); // New account routes
+const accountRoutes = require("./routes/account-routes");
 
 app.use("/", indexRouter);
 app.use("/inv", inventoryRoutes);
-app.use("/account", accountRoutes); // Use account routes
+app.use("/account", accountRoutes);
 
 // 404 handler
 app.use(async (req, res) => {
