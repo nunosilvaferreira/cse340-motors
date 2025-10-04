@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Motors</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <header>
+        <h1>Motors</h1>
+        <p>Your trusted source for vehicles</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/" title="Home page">Home</a></li>
+            <li><a href="/inv/classification/1" title="Browse our inventory">Inventory</a></li>
+            <% if (typeof accountData !== 'undefined' && accountData) { %>
+                <li><a href="/account/"><%= accountData.account_firstname %></a></li>
+                <li><a href="/account/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/account/login">Login</a></li>
+                <li><a href="/account/register">Register</a></li>
+            <% } %>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h1>Update Account Information</h1>
+
+        <% if (typeof messages !== 'undefined' && messages.length) { %>
+            <div class="messages">
+                <% messages.forEach(message => { %>
+                    <div class="flash-message <%= message.type %>">
+                        <%= message.text %>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <!-- Account Update Form -->
+        <section class="form-section">
+            <h2>Update Account Details</h2>
+            <form action="/account/update" method="post">
+                <input type="hidden" name="account_id" value="<%= account_id %>">
+                
+                <div class="form-group">
+                    <label for="account_firstname">First Name:</label>
+                    <input type="text" id="account_firstname" name="account_firstname" 
+                           value="<%= account_firstname %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="account_lastname">Last Name:</label>
+                    <input type="text" id="account_lastname" name="account_lastname" 
+                           value="<%= account_lastname %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="account_email">Email:</label>
+                    <input type="email" id="account_email" name="account_email" 
+                           value="<%= account_email %>" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Account</button>
+            </form>
+        </section>
+
+        <!-- Password Update Form -->
+        <section class="form-section">
+            <h2>Change Password</h2>
+            <form action="/account/update-password" method="post">
+                <input type="hidden" name="account_id" value="<%= account_id %>">
+                
+                <div class="form-group">
+                    <label for="account_password">New Password:</label>
+                    <input type="password" id="account_password" name="account_password" 
+                           placeholder="Enter new password" required>
+                    <small>Password must be at least 6 characters long.</small>
+                </div>
+
+                <button type="submit" class="btn btn-secondary">Change Password</button>
+            </form>
+        </section>
+
+        <p><a href="/account/" class="btn">Back to Account Management</a></p>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Motors. All rights reserved.</p>
+    </footer>
+</body>
+</html>

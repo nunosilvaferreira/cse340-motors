@@ -1,11 +1,16 @@
-<%- nav %>
+<ul class="main-nav">
+    <li><a href="/" title="Home page">Home</a></li>
+    <li><a href="/inv/classification/1" title="Browse our inventory">Inventory</a></li>
+</ul>
 
 <ul class="account-nav">
-  <% if (accountData) { %>
-    <li><a href="/account/">Account</a></li>
-    <li><a href="/account/logout">Logout</a></li>
-  <% } else { %>
-    <li><a href="/account/login">Login</a></li>
-    <li><a href="/account/register">Register</a></li>
-  <% } %>
+    <% if (typeof accountData !== 'undefined' && accountData) { %>
+        <li><a href="/account/" title="Account management">
+            Welcome <%= accountData.account_firstname %>
+        </a></li>
+        <li><a href="/account/logout" title="Logout">Logout</a></li>
+    <% } else { %>
+        <li><a href="/account/login" title="Login">Login</a></li>
+        <li><a href="/account/register" title="Register">Register</a></li>
+    <% } %>
 </ul>

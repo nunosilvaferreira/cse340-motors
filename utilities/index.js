@@ -139,6 +139,27 @@ utilities.checkJWT = (req, res, next) => {
   }
 }
 
+/* ****************************************
+ * Check account type for authorization
+ **************************************** */
+utilities.checkAccountType = (requiredType) => {
+  return (req, res, next) => {
+    const accountData = res.locals.accountData
+    
+    if (!accountData) {
+      req.flash("notice", "Please log in to access this page.")
+      return res.redirect("/account/login")
+    }
+    
+    if (accountData.account_type === requiredType || accountData.account_type === "Admin") {
+      next()
+    } else {
+      req.flash("notice", "You are not authorized to access this page.")
+      res.redirect("/account/")
+    }
+  }
+}
+
 // Export helpers too
 utilities.buildImagePath = buildImagePath
 utilities.formatNumber = formatNumber
