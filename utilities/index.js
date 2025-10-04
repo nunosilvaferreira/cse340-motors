@@ -8,16 +8,35 @@ const utilities = {}
  * Build navigation bar dynamically
  */
 utilities.getNav = async function () {
-  const data = await invModel.getClassifications()
-  let list = '<ul class="main-nav">'
-  list += '<li><a href="/" title="Home page">Home</a></li>'
-  if (data && data.rows) {
-    data.rows.forEach((row) => {
-      list += `<li><a href="/inv/classification/${row.classification_id}" title="See ${row.classification_name} vehicles">${row.classification_name}</a></li>`
-    })
+  try {
+    const data = await invModel.getClassifications()
+    let list = '<ul class="main-nav">'
+    list += '<li><a href="/" title="Home page">Home</a></li>'
+    
+    if (data && data.rows) {
+      data.rows.forEach((row) => {
+        list += `<li><a href="/inv/classification/${row.classification_id}" title="See ${row.classification_name} vehicles">${row.classification_name}</a></li>`
+      })
+    } else if (data && Array.isArray(data)) {
+      // Handle case where data is already an array
+      data.forEach((row) => {
+        list += `<li><a href="/inv/classification/${row.classification_id}" title="See ${row.classification_name} vehicles">${row.classification_name}</a></li>`
+      })
+    }
+    
+    list += '<li><a href="/inv/inventory" title="See all vehicles">All Vehicles</a></li>'
+    list += "</ul>"
+    return list
+  } catch (error) {
+    console.error("Error building navigation:", error)
+    // Return basic navigation as fallback
+    return `
+      <ul class="main-nav">
+        <li><a href="/" title="Home page">Home</a></li>
+        <li><a href="/inv/inventory" title="See all vehicles">All Vehicles</a></li>
+      </ul>
+    `
   }
-  list += "</ul>"
-  return list
 }
 
 /**

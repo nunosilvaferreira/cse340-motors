@@ -47,6 +47,7 @@ invController.buildByClassificationId = async function (req, res, next) {
       title: title,
       nav,
       data,
+      classification_name: classification ? classification.classification_name : "Unknown",
     });
   } catch (err) {
     console.error("Error in buildByClassificationId:", err);

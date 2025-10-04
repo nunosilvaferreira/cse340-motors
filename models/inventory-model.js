@@ -40,7 +40,7 @@ inventoryModel.getClassifications = async function () {
   try {
     const sql = `SELECT classification_id, classification_name FROM classification ORDER BY classification_name`;
     const result = await pool.query(sql);
-    return result;
+    return result.rows; // Return just the rows array
   } catch (error) {
     console.error("Inventory model error (getClassifications):", error);
     throw error;
