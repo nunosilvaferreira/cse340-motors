@@ -11,10 +11,15 @@ const invController = {};
  */
 invController.buildInventory = async function (req, res, next) {
   try {
+    console.log("Building inventory page...");
+    
     const data = await invModel.getInventory();
     const nav = await utilities.getNav();
     
-    console.log("Inventory data:", data); // Debug log
+    console.log("Inventory data retrieved:", data ? data.length : 0, "items");
+    
+    // Make sure utilities are available to the view
+    res.locals.utilities = utilities;
     
     res.render("inventory/list", {
       title: "All Vehicles",
@@ -33,15 +38,20 @@ invController.buildInventory = async function (req, res, next) {
 invController.buildByClassificationId = async function (req, res, next) {
   try {
     const classification_id = req.params.classificationId;
+    console.log(`Building classification page for ID: ${classification_id}`);
+    
     const data = await invModel.getInventoryByClassificationId(classification_id);
     const nav = await utilities.getNav();
     
-    console.log(`Inventory for classification ${classification_id}:`, data); // Debug log
+    console.log(`Inventory for classification ${classification_id}:`, data ? data.length : 0, "items");
     
     // Get classification name for title
     const classifications = await classificationModel.getAllClassifications();
     const classification = classifications.find(c => c.classification_id == classification_id);
     const title = classification ? `${classification.classification_name} Vehicles` : "Inventory";
+    
+    // Make sure utilities are available to the view
+    res.locals.utilities = utilities;
     
     res.render("inventory/classification", {
       title: title,
@@ -61,6 +71,8 @@ invController.buildByClassificationId = async function (req, res, next) {
 invController.buildVehicleDetail = async function (req, res, next) {
   try {
     const invId = req.params.invId;
+    console.log(`Building vehicle detail for ID: ${invId}`);
+    
     const vehicle = await invModel.getInventoryById(invId);
 
     if (!vehicle) {
@@ -96,7 +108,7 @@ invController.buildManagement = async function (req, res, next) {
     const nav = await utilities.getNav();
     const messages = req.flash();
     
-    console.log("Classifications:", classifications); // Debug log
+    console.log("Classifications for management:", classifications);
 
     res.render("inventory/management", {
       title: "Inventory Management",

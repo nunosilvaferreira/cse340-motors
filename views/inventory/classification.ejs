@@ -13,9 +13,8 @@
     </header>
 
     <nav>
-        <ul>
-            <li><a href="/" title="Home page">Home</a></li>
-            <li><a href="/inv/classification/1" title="Browse our inventory">Inventory</a></li>
+        <%- nav %>
+        <ul class="account-nav">
             <% if (typeof accountData !== 'undefined' && accountData) { %>
                 <li><a href="/account/"><%= accountData.account_firstname %></a></li>
                 <li><a href="/account/logout">Logout</a></li>
@@ -34,7 +33,7 @@
                 <% data.forEach(function(item) { %>
                     <div class="vehicle-card">
                         <a href="/inv/detail/<%= item.inv_id %>">
-                            <img src="<%= utilities.buildImagePath(item.inv_image) %>" 
+                            <img src="<%= item.inv_image || '/images/vehicle-default.jpg' %>" 
                                  alt="<%= item.inv_make %> <%= item.inv_model %>" 
                                  class="vehicle-thumb">
                         </a>
@@ -47,10 +46,10 @@
                             </h3>
                             
                             <p class="vehicle-year"><strong>Year:</strong> <%= item.inv_year %></p>
-                            <p class="vehicle-price"><strong>Price:</strong> <%= utilities.formatCurrency(item.inv_price) %></p>
+                            <p class="vehicle-price"><strong>Price:</strong> $<%= Number(item.inv_price).toLocaleString() %></p>
                             
                             <% if (item.inv_miles) { %>
-                                <p class="vehicle-miles"><strong>Mileage:</strong> <%= utilities.formatNumber(item.inv_miles) %> miles</p>
+                                <p class="vehicle-miles"><strong>Mileage:</strong> <%= Number(item.inv_miles).toLocaleString() %> miles</p>
                             <% } %>
                             
                             <% if (item.inv_description) { %>
@@ -65,7 +64,7 @@
         <% } else { %>
             <div class="no-vehicles">
                 <p>No vehicles found for this classification.</p>
-                <a href="/inv/inventory" class="btn">View All Vehicles</a>
+                <a href="/inv/inventory" class="btn btn-primary">View All Vehicles</a>
             </div>
         <% } %>
     </main>
