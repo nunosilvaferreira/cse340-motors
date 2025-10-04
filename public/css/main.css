@@ -553,3 +553,119 @@ form button {
 form button:hover {
   background-color: #0056b3;
 }
+
+/* ==========================
+   Inventory Grid Styles
+   ========================== */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.vehicle-card {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.vehicle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.vehicle-thumb {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.vehicle-info {
+    padding: 1.5rem;
+}
+
+.vehicle-info h3 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.vehicle-info h3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.vehicle-info h3 a:hover {
+    color: var(--secondary-color);
+}
+
+.vehicle-year,
+.vehicle-price,
+.vehicle-miles {
+    margin: 0.5rem 0;
+    color: var(--text-color);
+}
+
+.vehicle-price {
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+}
+
+.vehicle-description {
+    margin: 1rem 0;
+    color: var(--dark-gray);
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.no-vehicles {
+    text-align: center;
+    padding: 3rem;
+    background: var(--light-gray);
+    border-radius: 12px;
+    margin: 2rem 0;
+}
+
+.no-vehicles p {
+    margin-bottom: 1rem;
+    color: var(--dark-gray);
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Flash Messages */
+.flash-message {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.flash-message.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.flash-message.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.flash-message.info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}

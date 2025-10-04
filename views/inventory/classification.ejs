@@ -1,52 +1,77 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title><%= title %></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/css/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Motors</title>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-  <%- include("../partials/header") %>
+    <header>
+        <h1>Motors</h1>
+        <p>Your trusted source for vehicles</p>
+    </header>
 
-  <main>
-    <h2><%= title %></h2>
-
-    <% if (data && data.length > 0) { %>
-      <section class="inventory-grid">
-        <% data.forEach(item => { %>
-          <article class="vehicle-card">
-            <a href="/inv/detail/<%= item.inv_id %>">
-              <img src="<%= buildImagePath(item.inv_image) %>" 
-                   alt="<%= item.inv_make + ' ' + item.inv_model %>" 
-                   class="vehicle-thumb" />
-            </a>
-
-            <h3>
-              <a href="/inv/detail/<%= item.inv_id %>">
-                <%= item.inv_make %> <%= item.inv_model %>
-              </a>
-            </h3>
-
-            <p class="vehicle-year">Year: <%= item.inv_year %></p>
-            <p class="vehicle-price">Price: <%= formatCurrency(item.inv_price) %></p>
-
-            <% if (item.inv_miles) { %>
-              <p class="vehicle-miles">Mileage: <%= formatNumber(item.inv_miles) %> miles</p>
+    <nav>
+        <ul>
+            <li><a href="/" title="Home page">Home</a></li>
+            <li><a href="/inv/classification/1" title="Browse our inventory">Inventory</a></li>
+            <% if (typeof accountData !== 'undefined' && accountData) { %>
+                <li><a href="/account/"><%= accountData.account_firstname %></a></li>
+                <li><a href="/account/logout">Logout</a></li>
+            <% } else { %>
+                <li><a href="/account/login">Login</a></li>
+                <li><a href="/account/register">Register</a></li>
             <% } %>
+        </ul>
+    </nav>
 
-            <% if (item.inv_description) { %>
-              <p class="vehicle-description"><%= item.inv_description %></p>
-            <% } %>
+    <main class="container">
+        <h1><%= title %></h1>
 
-            <a href="/inv/detail/<%= item.inv_id %>" class="btn-primary">View Details</a>
-          </article>
-        <% }) %>
-      </section>
-    <% } else { %>
-      <p class="no-vehicles">No vehicles found for this classification.</p>
-    <% } %>
-  </main>
-<
-  </body>
+        <% if (data && data.length > 0) { %>
+            <div class="inventory-grid">
+                <% data.forEach(function(item) { %>
+                    <div class="vehicle-card">
+                        <a href="/inv/detail/<%= item.inv_id %>">
+                            <img src="<%= utilities.buildImagePath(item.inv_image) %>" 
+                                 alt="<%= item.inv_make %> <%= item.inv_model %>" 
+                                 class="vehicle-thumb">
+                        </a>
+                        
+                        <div class="vehicle-info">
+                            <h3>
+                                <a href="/inv/detail/<%= item.inv_id %>">
+                                    <%= item.inv_make %> <%= item.inv_model %>
+                                </a>
+                            </h3>
+                            
+                            <p class="vehicle-year"><strong>Year:</strong> <%= item.inv_year %></p>
+                            <p class="vehicle-price"><strong>Price:</strong> <%= utilities.formatCurrency(item.inv_price) %></p>
+                            
+                            <% if (item.inv_miles) { %>
+                                <p class="vehicle-miles"><strong>Mileage:</strong> <%= utilities.formatNumber(item.inv_miles) %> miles</p>
+                            <% } %>
+                            
+                            <% if (item.inv_description) { %>
+                                <p class="vehicle-description"><%= item.inv_description.substring(0, 100) %>...</p>
+                            <% } %>
+                            
+                            <a href="/inv/detail/<%= item.inv_id %>" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="no-vehicles">
+                <p>No vehicles found for this classification.</p>
+                <a href="/inv/inventory" class="btn">View All Vehicles</a>
+            </div>
+        <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Motors. All rights reserved.</p>
+    </footer>
+</body>
 </html>
