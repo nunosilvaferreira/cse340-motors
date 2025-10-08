@@ -4,6 +4,17 @@ const jwt = require("jsonwebtoken")
 
 const utilities = {}
 
+// Escape HTML to prevent XSS
+function escapeHtml(unsafe) {
+  if (!unsafe) return ""
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
+
 /**
  * Build navigation bar dynamically
  */
@@ -68,9 +79,9 @@ function formatCurrency(n) {
 }
 
 /**
- * Build vehicle detail HTML
+ * Build vehicle detail HTML (W06 updated with reviews)
  */
-utilities.buildVehicleDetail = function (vehicle) {
+utilities.buildVehicleDetail = function (vehicle, reviews = []) {
   if (!vehicle) {
     return "<p>Vehicle information not available.</p>"
   }
@@ -98,7 +109,7 @@ utilities.buildVehicleDetail = function (vehicle) {
   const imgSrc = buildImagePath(imgFile)
   const title = `${make} ${model}`.trim()
 
-  const html = `
+  let html = `
     <article class="vehicle-detail">
       <figure class="vehicle-image">
         <img src="${imgSrc}" alt="${title}" loading="lazy">
@@ -128,7 +139,51 @@ utilities.buildVehicleDetail = function (vehicle) {
       </section>
     </article>
   `
-  return html
+
+  // Append reviews section
+  let reviewsHtml = `
+    <section class="reviews">
+      <h3>Customer Reviews</h3>
+  `
+  if (reviews && reviews.length > 0) {
+    reviewsHtml += "<ul>"
+    reviews.forEach((r) => {
+      const safeName = escapeHtml(r.reviewer_name)
+      const safeText = escapeHtml(r.review_text)
+      reviewsHtml += `<li>
+        <strong>${safeName}</strong> — ${new Date(r.review_date).toLocaleString()}<br/>
+        Rating: ${Number(r.rating)}/5
+        <p>${safeText}</p>
+      </li>`
+    })
+    reviewsHtml += "</ul>"
+  } else {
+    reviewsHtml += "<p>No reviews yet. Be the first to review this vehicle!</p>"
+  }
+
+  reviewsHtml += `
+      <form action="/reviews/add" method="post" class="review-form">
+        <input type="hidden" name="inv_id" value="${vehicle.inv_id}">
+        <label for="reviewer_name">Your name</label>
+        <input type="text" name="reviewer_name" id="reviewer_name" required>
+
+        <label for="rating">Rating (1-5)</label>
+        <select name="rating" id="rating">
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+        </select>
+
+        <label for="review_text">Review</label>
+        <textarea name="review_text" id="review_text" required></textarea>
+
+        <button type="submit" class="btn btn-primary">Post Review</button>
+      </form>
+    </section>`
+
+  return html + reviewsHtml
 }
 
 // ======================================================

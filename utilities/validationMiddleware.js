@@ -96,6 +96,27 @@ exports.validatePassword = () => {
   };
 };
 
+// Validation for review
+exports.validateReview = (req, res, next) => {
+  const { inv_id, reviewer_name, review_text, rating } = req.body;
+
+  if (!inv_id || isNaN(Number(inv_id))) {
+    return next(new Error("Invalid vehicle identifier."));
+  }
+  if (!reviewer_name || reviewer_name.trim().length < 2) {
+    return next(new Error("Reviewer name must be at least 2 characters."));
+  }
+  if (!review_text || review_text.trim().length < 5) {
+    return next(new Error("Review text must be at least 5 characters."));
+  }
+  const r = Number(rating);
+  if (!rating || isNaN(r) || r < 1 || r > 5) {
+    return next(new Error("Rating must be an integer between 1 and 5."));
+  }
+
+  next();
+};
+
 // Helper function to validate email
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

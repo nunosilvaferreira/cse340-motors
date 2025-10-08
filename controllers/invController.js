@@ -3,6 +3,7 @@ const invModel = require("../models/inventory-model");
 const classificationModel = require("../models/classificationModel");
 const vehicleModel = require("../models/vehicleModel");
 const utilities = require("../utilities/");
+const reviewModel = require("../models/reviewModel");
 
 const invController = {};
 
@@ -66,7 +67,7 @@ invController.buildByClassificationId = async function (req, res, next) {
 };
 
 /**
- * Vehicle detail
+ * Vehicle detail (W06 updated with reviews)
  */
 invController.buildVehicleDetail = async function (req, res, next) {
   try {
@@ -81,7 +82,11 @@ invController.buildVehicleDetail = async function (req, res, next) {
       throw err;
     }
 
-    const vehicleHTML = utilities.buildVehicleDetail(vehicle);
+    // Fetch reviews for this vehicle
+    const reviews = await reviewModel.getReviewsByInvId(invId);
+
+    // Build vehicle HTML including reviews section
+    const vehicleHTML = utilities.buildVehicleDetail(vehicle, reviews);
     const nav = await utilities.getNav();
 
     res.render("inventory/detail", {

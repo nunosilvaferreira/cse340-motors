@@ -63,10 +63,12 @@ app.locals.formatNumber = utilities.formatNumber;
 const indexRouter = require("./routes/index");
 const inventoryRoutes = require("./routes/inventory-routes");
 const accountRoutes = require("./routes/account-routes");
+const reviewRoutes = require("./routes/review-routes"); // ✅ Added
 
 app.use("/", indexRouter);
 app.use("/inv", inventoryRoutes);
 app.use("/account", accountRoutes);
+app.use("/reviews", reviewRoutes); // ✅ Register reviews routes
 
 // 404 handler
 app.use(async (req, res) => {
