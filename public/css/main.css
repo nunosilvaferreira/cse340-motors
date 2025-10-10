@@ -60,18 +60,23 @@ header p {
    ========================== */
 nav {
   background: linear-gradient(135deg, var(--secondary-color), #c0392b);
-  padding: 1rem 0;
+  padding: 1rem 2rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 nav ul {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   list-style: none;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   margin: 0;
   padding: 0;
+  flex-wrap: nowrap;
+  gap: 1rem;
+}
+
+nav li {
+  display: inline-block;
 }
 
 nav a {
@@ -82,6 +87,8 @@ nav a {
   transition: var(--transition);
   font-weight: 500;
   border: 2px solid transparent;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 nav a:hover,
