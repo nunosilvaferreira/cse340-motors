@@ -51,6 +51,49 @@ utilities.getNav = async function () {
 }
 
 /**
+ * Build inventory grid for classification pages
+ */
+utilities.buildInventoryGrid = function (data) {
+  if (!data || data.length === 0) {
+    return "<p>No vehicles found in this classification.</p>";
+  }
+
+  let grid = '<div class="inventory-grid">';
+  data.forEach((item) => {
+    const img = utilities.buildImagePath(item.inv_thumbnail || item.inv_image);
+    const name = `${item.inv_make} ${item.inv_model}`;
+    grid += `
+      <div class="vehicle-card">
+        <a href="/inv/detail/${item.inv_id}">
+          <img src="${img}" 
+               alt="Image of ${name}" 
+               class="vehicle-thumb" 
+               loading="lazy">
+        </a>
+        <div class="vehicle-info">
+          <h3><a href="/inv/detail/${item.inv_id}">${name}</a></h3>
+          <p class="vehicle-year"><strong>Year:</strong> ${item.inv_year}</p>
+          <p class="vehicle-price"><strong>Price:</strong> ${utilities.formatCurrency(item.inv_price)}</p>
+          ${
+            item.inv_miles
+              ? `<p class="vehicle-miles"><strong>Mileage:</strong> ${utilities.formatNumber(item.inv_miles)} miles</p>`
+              : ""
+          }
+          ${
+            item.inv_description
+              ? `<p class="vehicle-description">${escapeHtml(item.inv_description.substring(0, 100))}...</p>`
+              : ""
+          }
+          <a href="/inv/detail/${item.inv_id}" class="btn btn-primary">View Details</a>
+        </div>
+      </div>`;
+  });
+  grid += "</div>";
+  return grid;
+};
+
+
+/**
  * Helpers for formatting and image path
  */
 function buildImagePath(img) {
