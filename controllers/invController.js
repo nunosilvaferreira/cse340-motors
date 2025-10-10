@@ -43,18 +43,19 @@ invController.buildByClassificationId = async function (req, res, next) {
     
     const data = await invModel.getInventoryByClassificationId(classification_id);
     const nav = await utilities.getNav();
-
-    // build grid HTML with utilities
-    const grid = utilities.buildInventoryGrid(data);
-
+    
+    console.log(`Inventory for classification ${classification_id}:`, data ? data.length : 0, "items");
+    
+    // Get classification name for title
     const classifications = await classificationModel.getAllClassifications();
     const classification = classifications.find(c => c.classification_id == classification_id);
     const title = classification ? `${classification.classification_name} Vehicles` : "Inventory";
     
+    // Pass data directly to EJS
     res.render("inventory/classification", {
-      title,
+      title: title,
       nav,
-      grid,
+      data,
       classification_name: classification ? classification.classification_name : "Unknown",
     });
   } catch (err) {

@@ -13,8 +13,47 @@
     </header>
 
     <main class="container">
-        <h1><%= classification_name %></h1>
-        <%- grid %>
+        <h1><%= title %></h1>
+
+        <% if (data && data.length > 0) { %>
+            <div class="inventory-grid">
+                <% data.forEach(function(item) { %>
+                    <div class="vehicle-card">
+                        <a href="/inv/detail/<%= item.inv_id %>">
+                            <img src="<%= item.inv_image || '/images/vehicle-default.jpg' %>" 
+                                 alt="<%= item.inv_make %> <%= item.inv_model %>" 
+                                 class="vehicle-thumb">
+                        </a>
+                        
+                        <div class="vehicle-info">
+                            <h3>
+                                <a href="/inv/detail/<%= item.inv_id %>">
+                                    <%= item.inv_make %> <%= item.inv_model %>
+                                </a>
+                            </h3>
+                            
+                            <p class="vehicle-year"><strong>Year:</strong> <%= item.inv_year %></p>
+                            <p class="vehicle-price"><strong>Price:</strong> $<%= Number(item.inv_price).toLocaleString() %></p>
+                            
+                            <% if (item.inv_miles) { %>
+                                <p class="vehicle-miles"><strong>Mileage:</strong> <%= Number(item.inv_miles).toLocaleString() %> miles</p>
+                            <% } %>
+                            
+                            <% if (item.inv_description) { %>
+                                <p class="vehicle-description"><%= item.inv_description.substring(0, 100) %>...</p>
+                            <% } %>
+                            
+                            <a href="/inv/detail/<%= item.inv_id %>" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="no-vehicles">
+                <p>No vehicles found for this classification.</p>
+                <a href="/inv/inventory" class="btn btn-primary">View All Vehicles</a>
+            </div>
+        <% } %>
     </main>
 
     <footer>
