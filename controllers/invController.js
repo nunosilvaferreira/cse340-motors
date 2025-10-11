@@ -8,20 +8,19 @@ const reviewModel = require("../models/reviewModel");
 const invController = {};
 
 /**
- * Full inventory list
+ * Build full inventory list
  */
 invController.buildInventory = async function (req, res, next) {
   try {
     console.log("Building inventory page...");
-    
+
     const data = await invModel.getInventory();
     const nav = await utilities.getNav();
-    
+
     console.log("Inventory data retrieved:", data ? data.length : 0, "items");
-    
-    // Make sure utilities are available to the view
+
     res.locals.utilities = utilities;
-    
+
     res.render("inventory/list", {
       title: "All Vehicles",
       nav,
@@ -29,61 +28,72 @@ invController.buildInventory = async function (req, res, next) {
     });
   } catch (err) {
     console.error("Error in buildInventory:", err);
+    req.flash("error", "Could not load the inventory list.");
     next(err);
   }
 };
 
 /**
- * Inventory by classification
+ * Build inventory by classification
  */
 invController.buildByClassificationId = async function (req, res, next) {
   try {
     const classification_id = req.params.classificationId;
     console.log(`Building classification page for ID: ${classification_id}`);
-    
+
     const data = await invModel.getInventoryByClassificationId(classification_id);
     const nav = await utilities.getNav();
-    
-    console.log(`Inventory for classification ${classification_id}:`, data ? data.length : 0, "items");
-    
-    // Get classification name for title
+
     const classifications = await classificationModel.getAllClassifications();
-    const classification = classifications.find(c => c.classification_id == classification_id);
-    const title = classification ? `${classification.classification_name} Vehicles` : "Inventory";
-    
-    // Pass data directly to EJS
+    const classification = classifications.find(
+      (c) => c.classification_id == classification_id
+    );
+    const title = classification
+      ? `${classification.classification_name} Vehicles`
+      : "Inventory";
+
     res.render("inventory/classification", {
-      title: title,
+      title,
       nav,
       data,
-      classification_name: classification ? classification.classification_name : "Unknown",
+      classification_name: classification
+        ? classification.classification_name
+        : "Unknown",
     });
   } catch (err) {
     console.error("Error in buildByClassificationId:", err);
+    req.flash("error", "Unable to load this classification.");
     next(err);
   }
 };
 
 /**
- * Vehicle detail (W06 updated with reviews)
+ * Build vehicle detail (W06 with reviews)
  */
 invController.buildVehicleDetail = async function (req, res, next) {
   try {
     const invId = req.params.invId;
     console.log(`Building vehicle detail for ID: ${invId}`);
-    
-    const vehicle = await invModel.getInventoryById(invId);
 
+    const vehicle = await invModel.getInventoryById(invId);
     if (!vehicle) {
       const err = new Error("Vehicle not found");
       err.status = 404;
       throw err;
     }
 
-    // Fetch reviews for this vehicle
-    const reviews = await reviewModel.getReviewsByInvId(invId);
+    // --- Get reviews safely (do not throw if DB fails) ---
+    let reviews = [];
+    try {
+      reviews = await reviewModel.getReviewsByInvId(invId);
+    } catch (rvErr) {
+      console.warn(
+        "Warning: Could not load reviews (continuing without them):",
+        rvErr.message
+      );
+      reviews = [];
+    }
 
-    // Build vehicle HTML including reviews section
     const vehicleHTML = utilities.buildVehicleDetail(vehicle, reviews);
     const nav = await utilities.getNav();
 
@@ -94,6 +104,7 @@ invController.buildVehicleDetail = async function (req, res, next) {
     });
   } catch (err) {
     console.error("Error in buildVehicleDetail:", err);
+    req.flash("error", "Unable to display this vehicle right now.");
     next(err);
   }
 };
@@ -103,15 +114,13 @@ invController.buildVehicleDetail = async function (req, res, next) {
    ========================= */
 
 /**
- * Management page
+ * Build management page
  */
 invController.buildManagement = async function (req, res, next) {
   try {
     const classifications = await classificationModel.getAllClassifications();
     const nav = await utilities.getNav();
     const messages = req.flash();
-    
-    console.log("Classifications for management:", classifications);
 
     res.render("inventory/management", {
       title: "Inventory Management",
@@ -121,6 +130,7 @@ invController.buildManagement = async function (req, res, next) {
     });
   } catch (err) {
     console.error("Error in buildManagement:", err);
+    req.flash("error", "Unable to load management page.");
     next(err);
   }
 };
@@ -143,7 +153,7 @@ invController.addClassification = async function (req, res, next) {
 };
 
 /**
- * Show add vehicle form
+ * Build Add Vehicle form
  */
 invController.buildAddVehicle = async function (req, res, next) {
   try {
@@ -159,6 +169,7 @@ invController.buildAddVehicle = async function (req, res, next) {
     });
   } catch (err) {
     console.error("Error in buildAddVehicle:", err);
+    req.flash("error", "Unable to load Add Vehicle form.");
     next(err);
   }
 };
@@ -227,6 +238,7 @@ invController.buildEditVehicle = async function (req, res, next) {
     });
   } catch (err) {
     console.error("Error in buildEditVehicle:", err);
+    req.flash("error", "Unable to load edit form.");
     next(err);
   }
 };
@@ -236,18 +248,39 @@ invController.buildEditVehicle = async function (req, res, next) {
  */
 invController.updateVehicle = async function (req, res, next) {
   try {
-    const { inv_id, classification_id, make, model, year, description, price, miles, color, image, thumbnail } = req.body;
-    
+    const {
+      inv_id,
+      classification_id,
+      make,
+      model,
+      year,
+      description,
+      price,
+      miles,
+      color,
+      image,
+      thumbnail,
+    } = req.body;
+
     const sql = `
       UPDATE inventory
       SET classification_id=$1, inv_make=$2, inv_model=$3, inv_year=$4, inv_description=$5,
           inv_price=$6, inv_miles=$7, inv_color=$8, inv_image=$9, inv_thumbnail=$10
       WHERE inv_id=$11
     `;
-    
+
     await require("../database/db").query(sql, [
-      classification_id, make, model, year, description, 
-      price, miles, color, image, thumbnail, inv_id
+      classification_id,
+      make,
+      model,
+      year,
+      description,
+      price,
+      miles,
+      color,
+      image,
+      thumbnail,
+      inv_id,
     ]);
 
     req.flash("success", "Vehicle updated successfully.");
@@ -265,16 +298,14 @@ invController.updateVehicle = async function (req, res, next) {
 invController.getInventoryJSON = async (req, res, next) => {
   try {
     const classification_id = parseInt(req.params.classification_id);
-    const invData = await invModel.getInventoryByClassificationId(classification_id);
-    
-    if (invData && invData.length > 0) {
-      return res.json(invData);
-    } else {
-      return res.json([]);
-    }
+    const invData = await invModel.getInventoryByClassificationId(
+      classification_id
+    );
+
+    res.json(invData || []);
   } catch (error) {
     console.error("Error in getInventoryJSON:", error);
-    next(new Error("No data returned"));
+    res.json([]);
   }
 };
 
